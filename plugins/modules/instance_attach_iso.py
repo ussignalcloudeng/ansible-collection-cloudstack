@@ -160,7 +160,8 @@ class AnsibleCloudStackInstanceIso(AnsibleCloudStack):
                         break
         return self.instance
 
-    def attach_iso(self, instance, attach=True):
+    def attach_iso(self):
+        instance = self.get_instance()
         
         self.result["changed"] = True 
 
