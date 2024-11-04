@@ -11,6 +11,7 @@ action_groups:
     - host
     - image_store
     - instance
+    - instance_attach_iso
     - instance_info
     - instance_nic
     - instance_nic_secondaryip
