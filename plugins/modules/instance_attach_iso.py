@@ -167,7 +167,7 @@ class AnsibleCloudStackInstanceIso(AnsibleCloudStack):
 
         args = {}
 
-        args["id"] = self.get_iso()
+        args["id"] = self.get_iso(key="id")
         args["virtualmachineid"] = instance["id"]
 
         if not self.module.check_mode:
