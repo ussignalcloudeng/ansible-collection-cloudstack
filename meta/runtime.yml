@@ -113,6 +113,11 @@ plugin_routing:
         removal_date: 2025-09-01
         warning_text: module was renamed to ngine_io.cloudstack.instance
       redirect: ngine_io.cloudstack.instance
+    cs_instance_attach_iso:
+      deprecation:
+        removal_date: 2025-09-01
+        warning_text: module was renamed to ngine_io.cloudstack.instance
+      redirect: ngine_io.cloudstack.instance_attach_iso
     cs_instance_info:
       deprecation:
         removal_date: 2025-09-01
