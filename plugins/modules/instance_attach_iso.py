@@ -216,7 +216,7 @@ def main():
         required_together=cs_required_together(),
         required_one_of=(["name"]),
         required_if=[
-            ('state', 'attached', ('iso'), True),
+            ('state', 'attached', ('iso')),
         ],
         supports_check_mode=True,
     )
