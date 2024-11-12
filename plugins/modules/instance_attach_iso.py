@@ -59,7 +59,7 @@ EXAMPLES = """
     iso: Linux Debian 7 64-bit
     state: attached
 
-- name: Detatch an ISO on an instance
+- name: detach an ISO on an instance
   ngine_io.cloudstack.instance_attach_iso:
     name: web-vm-1
     state: detatched
@@ -178,7 +178,7 @@ class AnsibleCloudStackInstanceIso(AnsibleCloudStack):
 
         return instance
 
-    def detatch_iso(self):
+    def detach_iso(self):
         instance = self.get_instance()
         if instance:
             if "isoname" in instance:
@@ -187,7 +187,7 @@ class AnsibleCloudStackInstanceIso(AnsibleCloudStack):
                     res = self.query_api("detachIso", virtualmachineid=instance["id"])
                     poll_async = self.module.params.get("poll_async")
                     if poll_async:
-                        instance = self.poll_job(res, "virtualmachine")
+                        instance = self.poll_job(res, "name")
         return instance
 
     def get_result(self, resource):
@@ -227,7 +227,7 @@ def main():
     state = module.params.get("state")
 
     if state in ["absent", "detatched"]:
-        instance = ainstance.detatch_iso()
+        instance = ainstance.detach_iso()
 
     elif state in ["present", "attached"]:
         instance = ainstance.attach_iso()
