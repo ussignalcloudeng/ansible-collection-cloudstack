@@ -150,6 +150,8 @@ class AnsibleCloudStackInstanceIso(AnsibleCloudStack):
             instance_name = self.get_or_fallback("name", "display_name")
             args = {
                 "fetch_list": True,
+                "account": self.get_account(key="name"),
+                "domainid": self.get_domain(key="id"),
             }
             # Do not pass zoneid, as the instance name must be unique across zones.
             instances = self.query_api("listVirtualMachines", **args)
@@ -202,6 +204,8 @@ def main():
         dict(
             name=dict(),
             iso=dict(),
+            domain=dict(),
+            account=dict(),
             state=dict(choices=["present", "absent", "attached", "detatched"], default="present"),
             iso_filter=dict(
                 default="executable",
