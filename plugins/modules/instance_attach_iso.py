@@ -35,6 +35,19 @@ options:
     type: str
     default: executable
     choices: [ all, featured, self, selfexecutable, sharedexecutable, executable, community ]
+  domain:
+    description:
+      - Domain the instance is related to.
+    type: str
+  account:
+    description:
+      - Account the instance is related to.
+    type: str
+  zone:
+    description:
+      - Name of the zone in which the instance is deployed in.
+    type: str
+    required: true
   poll_async:
     description:
       - Poll async jobs until job has finished.
@@ -174,6 +187,7 @@ def main():
             iso=dict(),
             domain=dict(),
             account=dict(),
+            zone=dict(required=True),
             state=dict(choices=["present", "absent", "attached", "detatched"], default="present"),
             iso_filter=dict(
                 default="all",
