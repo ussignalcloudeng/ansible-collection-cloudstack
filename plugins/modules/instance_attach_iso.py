@@ -122,13 +122,13 @@ class AnsibleCloudStackInstanceIso(AnsibleCloudStack):
         args = {
             "name": iso_name,
             "isrecursive": True,
-            "fetch_list": True,
+            "listall": True,
         }
-        print(args)
+
         args["isofilter"] = self.module.params.get("iso_filter")
 
         isos = self.query_api("listIsos", **args)
-    
+
         if isos:
             return self._get_by_key(key, self.iso)
 
