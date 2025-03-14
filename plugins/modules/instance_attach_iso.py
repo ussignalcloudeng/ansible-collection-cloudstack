@@ -99,9 +99,6 @@ isodisplaytext:
   sample: 'XenServer Tools Installer ISO (xen-pv-drv-iso)'
 """
 
-import base64
-
-from ansible.module_utils._text import to_bytes, to_text
 from ansible.module_utils.basic import AnsibleModule
 
 from ..module_utils.cloudstack import AnsibleCloudStack, cs_argument_spec, cs_required_together
@@ -128,7 +125,6 @@ class AnsibleCloudStackInstanceIso(AnsibleCloudStack):
             "fetch_list": True,
         }
         args["isofilter"] = self.module.params.get("iso_filter")
-        args["fetch_list"] = True
         isos = self.query_api("listIsos", **args)
     
         if isos:
