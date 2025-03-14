@@ -17,6 +17,7 @@ action_groups:
     - instance_nic_secondaryip
     - instance_password_reset
     - instance
+    - instance_attach_iso
     - instance_snapshot
     - ip_address
     - iso

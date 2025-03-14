@@ -16,13 +16,12 @@ short_description: Manages ISOs attaching and detatching from instances and virt
 description:
     - Attach and detach ISOs from instances
 author: Alex Dietrich (@adietrich-ussignal), René Moser (@resmo)
-version_added: 0.1.0
+version_added: 2.5.0
 options:
-  name:
+  vm:
     description:
       - Host name of the instance. C(name) can only contain ASCII letters.
       - Name will be generated (UUID) by CloudStack if not specified and can not be changed afterwards.
-      - Either C(name) or C(display_name) is required.
     type: str
     required: true 
   iso:
@@ -112,85 +111,57 @@ class AnsibleCloudStackInstanceIso(AnsibleCloudStack):
 
     def __init__(self, module):
         super(AnsibleCloudStackInstanceIso, self).__init__(module)
-        self.returns = {
-            "name": "name",
-            "isoname": "iso",
-        }
         self.instance = None
         self.iso = None
+        self.returns = {
+            "vm": "name",
+            "isoname": "iso",
+        }
 
     def get_iso(self, key=None):
-        iso = self.module.params.get("iso")
-
-        if not iso:
+        iso_name = self.module.params.get("iso")
+        if not iso_name:
             return None
-
         args = {
+            "name": iso_name,
             "isrecursive": True,
             "fetch_list": True,
         }
-
-        if self.iso:
-            return self._get_by_key(key, self.iso)
-
         args["isofilter"] = self.module.params.get("iso_filter")
         args["fetch_list"] = True
         isos = self.query_api("listIsos", **args)
+    
         if isos:
-            for i in isos:
-                if iso in [i["displaytext"], i["name"], i["id"]]:
-                    self.iso = i
-                    return self._get_by_key(key, self.iso)
+            return self._get_by_key(key, self.iso)
 
-        self.module.fail_json(msg="ISO '%s' not found" % iso)
-
-    def get_instance(self):
-        instance = self.instance
-        if not instance:
-            instance_name = self.get_or_fallback("name", "display_name")
-            args = {
-                "fetch_list": True,
-                "account": self.get_account(key="name"),
-                "domainid": self.get_domain(key="id"),
-            }
-            # Do not pass zoneid, as the instance name must be unique across zones.
-            instances = self.query_api("listVirtualMachines", **args)
-            if instances:
-                for v in instances:
-                    if instance_name.lower() in [v["name"].lower(), v["displayname"].lower(), v["id"]]:
-                        self.instance = v
-                        break
-        return self.instance
+        self.module.fail_json(msg=f"ISO '{iso_name}' not found")
 
     def attach_iso(self):
-        instance = self.get_instance()
-        
         self.result["changed"] = True 
-
-        args = {}
-
-        args["id"] = self.get_iso(key="id")
-        args["virtualmachineid"] = instance["id"]
-
+        args = {
+            "id": self.get_iso(key="id"),
+            "virtualmachineid": self.get_vm(key="id"),
+        }
         if not self.module.check_mode:
-          res = self.query_api("attachIso", **args)
-          poll_async = self.module.params.get("poll_async")
-          if poll_async:
-            instance = self.poll_job(res, "isoname")
+            res = self.query_api("attachIso", **args)
+            poll_async = self.module.params.get("poll_async")
+            if poll_async:
+                self.poll_job(res, "isoname")
 
-        return instance
+        return self.iso
+
 
     def detach_iso(self):
-        instance = self.get_instance()
-        if instance:
-            if "isoname" in instance:
-                self.result["changed"] = True
-                if not self.module.check_mode:
-                    res = self.query_api("detachIso", virtualmachineid=instance["id"])
-                    poll_async = self.module.params.get("poll_async")
-                    if poll_async:
-                        instance = self.poll_job(res, "name")
-        return instance
+        self.result["changed"] = True
+        args = {
+            "virtualmachineid": self.get_vm(key="id"),
+        }
+        if not self.module.check_mode:
+            res = self.query_api("detachIso", **args)
+            if self.module.params.get("poll_async"):
+                self.poll_job(res, "isoname")
+
+        return self.iso
 
     def get_result(self, resource):
         super(AnsibleCloudStackInstanceIso, self).get_result(resource)
@@ -202,7 +173,7 @@ def main():
     argument_spec = cs_argument_spec()
     argument_spec.update(
         dict(
-            name=dict(),
+            vm=dict(required=True, aliases=["name"]),
             iso=dict(),
             domain=dict(),
             account=dict(),
@@ -219,24 +190,24 @@ def main():
     module = AnsibleModule(
         argument_spec=argument_spec,
         required_together=cs_required_together(),
-        required_one_of=(["name"]),
+        required_one_of=(["vm"]),
         required_if=[
             ['state', 'attached', ['iso']],
         ],
         supports_check_mode=True,
     )
 
-    ainstance = AnsibleCloudStackInstanceIso(module)
+    instance_iso = AnsibleCloudStackInstanceIso(module)
 
     state = module.params.get("state")
-
     if state in ["absent", "detatched"]:
-        instance = ainstance.detach_iso()
+        iso = instance_iso.detach_iso()
 
     elif state in ["present", "attached"]:
-        instance = ainstance.attach_iso()
+        iso = instance_iso.attach_iso()
 
-    result = ainstance.get_result(instance)
+    result = instance_iso.get_result(iso)
+
     module.exit_json(**result)
 
 
