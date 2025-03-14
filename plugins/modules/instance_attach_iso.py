@@ -124,10 +124,10 @@ class AnsibleCloudStackInstanceIso(AnsibleCloudStack):
             "isrecursive": True,
             "listall": True,
         }
-
         args["isofilter"] = self.module.params.get("iso_filter")
 
         isos = self.query_api("listIsos", **args)
+        print(isos)
 
         if isos:
             return self._get_by_key(key, self.iso)
@@ -177,7 +177,7 @@ def main():
             account=dict(),
             state=dict(choices=["present", "absent", "attached", "detatched"], default="present"),
             iso_filter=dict(
-                default="executable",
+                default="all",
                 aliases=["iso_filter"],
                 choices=["all", "featured", "self", "selfexecutable", "sharedexecutable", "executable", "community"],
             ),
