@@ -130,7 +130,7 @@ class AnsibleCloudStackInstanceIso(AnsibleCloudStack):
         print(isos)
 
         if isos:
-            return self._get_by_key(key, self.iso)
+            return self._get_by_key(key, isos['iso'][0])
 
         self.module.fail_json(msg=f"ISO '{iso_name}' not found")
 
