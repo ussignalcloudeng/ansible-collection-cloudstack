@@ -124,7 +124,9 @@ class AnsibleCloudStackInstanceIso(AnsibleCloudStack):
             "isrecursive": True,
             "fetch_list": True,
         }
+        print(args)
         args["isofilter"] = self.module.params.get("iso_filter")
+
         isos = self.query_api("listIsos", **args)
     
         if isos:
