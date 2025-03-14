@@ -127,7 +127,6 @@ class AnsibleCloudStackInstanceIso(AnsibleCloudStack):
         args["isofilter"] = self.module.params.get("iso_filter")
 
         isos = self.query_api("listIsos", **args)
-        print(isos)
 
         if isos:
             return self._get_by_key(key, isos['iso'][0])
