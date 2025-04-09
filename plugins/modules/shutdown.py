@@ -89,7 +89,7 @@ class AnsibleCloudStackShutdown(AnsibleCloudStack):
         self.management_server = None
         self.returns = {
             "name": "name",
-            "managementserverid": "managementserverid",
+            "managementserverid": "management_server_id",
             "pendingjobscount": "pending_jobs_count",
             "readyforshutdown": "ready_for_shutdown",
             "shutdowntriggered": "shutdown_triggered",
