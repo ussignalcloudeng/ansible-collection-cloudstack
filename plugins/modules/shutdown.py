@@ -88,7 +88,6 @@ class AnsibleCloudStackShutdown(AnsibleCloudStack):
         super(AnsibleCloudStackShutdown, self).__init__(module)
         self.management_server = None
         self.returns = {
-            "name": "name",
             "pendingjobscount": "pending_jobs_count",
             "readyforshutdown": "ready_for_shutdown",
             "shutdowntriggered": "shutdown_triggered",
@@ -129,8 +128,11 @@ class AnsibleCloudStackShutdown(AnsibleCloudStack):
                 resource['readyforshutdown']['managementserverid'] = management_server_id
                 if resource['readyforshutdown']['readyforshutdown'] == True: 
                     ready = True 
-            
-        return resource
+
+        if 'readyforshutdown' in resource.keys():
+          return resource['readyforshutdown']
+        elif 'prepareforshutdown' in resource.keys(): 
+          return resource['prepareforshutdown']
     
     def trigger_shutdown(self): 
         self.result["changed"] = True
@@ -142,7 +144,7 @@ class AnsibleCloudStackShutdown(AnsibleCloudStack):
             }
             shutdown = self.query_api("triggerShutdown", **args)
 
-        return shutdown
+        return shutdown['triggershutdown']
     
     def cancel_shutdown(self): 
         self.result["changed"] = True 
@@ -165,8 +167,10 @@ class AnsibleCloudStackShutdown(AnsibleCloudStack):
                 if resource['readyforshutdown']['readyforshutdown'] == False: 
                     ready = False 
 
-        return resource
-
+        if 'cancelshutdown' in resource.keys():
+          return resource['readyforshutdown']
+        elif 'readyforshutdown' in resource.keys(): 
+          return resource['prepareforshutdown']
 
 def main():
     argument_spec = cs_argument_spec()
