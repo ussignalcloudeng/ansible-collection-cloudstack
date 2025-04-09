@@ -148,26 +148,40 @@ class AnsibleCloudStackShutdown(AnsibleCloudStack):
 
         return shutdown['triggershutdown']
     
+    def get_ready_for_shutdown(self):
+        management_server_id = self.get_management_server(key="id")
+        args = {
+            "managementserverid": management_server_id
+        }
+
+        resource = self.query_api("readyForShutdown", **args)
+
+        return resource
+    
     def cancel_shutdown(self): 
         self.result["changed"] = True 
         management_server_id = self.get_management_server(key="id")
         args = {
             "managementserverid": management_server_id
         }
-        if not self.module.check_mode: 
-            resource = self.query_api("cancelShutdown", **args)
-            
-            resource['cancelshutdown']['managementserverid'] = management_server_id
 
-            ready = True 
-            if resource['cancelshutdown']['readyforshutdown'] == False: 
-              ready = False
-           
-            while ready == True:
-                resource = self.query_api("readyForShutdown", **args)
-                resource['readyforshutdown']['managementserverid'] = management_server_id
-                if resource['readyforshutdown']['shutdowntriggered'] == False: 
-                    ready = False 
+        resource = self.get_ready_for_shutdown()
+
+        if resource['readyforshutdown']['shutdowntriggered'] == True:
+            self.result["changed"] = True 
+            if not self.module.check_mode:
+              resource = self.query_api("cancelShutdown", **args)
+              resource['cancelshutdown']['managementserverid'] = management_server_id
+
+              ready = True 
+              if resource['cancelshutdown']['readyforshutdown'] == False: 
+                ready = False
+            
+              while ready == True:
+                  resource = self.query_api("readyForShutdown", **args)
+                  resource['readyforshutdown']['managementserverid'] = management_server_id
+                  if resource['readyforshutdown']['shutdowntriggered'] == False: 
+                      ready = False 
 
         if 'cancelshutdown' in resource.keys():
           return resource['cancelshutdown']
