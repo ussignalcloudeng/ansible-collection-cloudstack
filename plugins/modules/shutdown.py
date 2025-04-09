@@ -178,12 +178,13 @@ class AnsibleCloudStackShutdown(AnsibleCloudStack):
                 ready = False
             
               while ready == True:
-                  resource = self.query_api("readyForShutdown", **args)
+                  resource = self.get_ready_for_shutdown()
                   resource['readyforshutdown']['managementserverid'] = management_server_id
                   if resource['readyforshutdown']['shutdowntriggered'] == False: 
                       ready = False 
         else: 
             self.result["changed"] = False
+            resource['readyforshutdown']['managementserverid'] = management_server_id
 
         if 'cancelshutdown' in resource.keys():
           return resource['cancelshutdown']
