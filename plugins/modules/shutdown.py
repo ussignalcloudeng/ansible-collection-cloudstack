@@ -121,7 +121,7 @@ class AnsibleCloudStackShutdown(AnsibleCloudStack):
             resource['prepareforshutdown']['managementserverid'] = management_server_id
 
             ready = False
-            if resource['prepareyforshutdown']['readyforshutdown'] == True: 
+            if resource['prepareforshutdown']['readyforshutdown'] == True: 
               ready = True
 
             while ready == False:
