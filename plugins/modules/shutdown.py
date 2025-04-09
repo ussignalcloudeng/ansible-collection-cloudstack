@@ -111,25 +111,32 @@ class AnsibleCloudStackShutdown(AnsibleCloudStack):
         self.module.fail_json(msg=f"Management Server '{management_server_name}' not found")
 
     def prepare_for_shutdown(self): 
-        self.result["changed"] = True 
         management_server_id = self.get_management_server(key="id")
         args = {
             "managementserverid": management_server_id
         }
-        if not self.module.check_mode: 
-            resource = self.query_api("prepareForShutdown", **args)
+
+        resource = self.get_ready_for_shutdown()
+
+        if resource['readyforshutdown']['shutdowntriggered'] == False: 
+            self.result["changed"] = True
+            if not self.module.check_mode: 
+              resource = self.query_api("prepareForShutdown", **args)
             
-            resource['prepareforshutdown']['managementserverid'] = management_server_id
+              resource['prepareforshutdown']['managementserverid'] = management_server_id
 
-            ready = False
-            if resource['prepareforshutdown']['readyforshutdown'] == True: 
-              ready = True
+              ready = False
+              if resource['prepareforshutdown']['readyforshutdown'] == True: 
+                ready = True
 
-            while ready == False:
-                resource = self.get_ready_for_shutdown()
-                resource['readyforshutdown']['managementserverid'] = management_server_id
-                if resource['readyforshutdown']['readyforshutdown'] == True: 
-                    ready = True 
+              while ready == False:
+                  resource = self.get_ready_for_shutdown()
+                  resource['readyforshutdown']['managementserverid'] = management_server_id
+                  if resource['readyforshutdown']['readyforshutdown'] == True: 
+                      ready = True 
+        
+        else: 
+            resource['readyforshutdown']['managementserverid'] = management_server_id
 
         if 'readyforshutdown' in resource.keys():
           return resource['readyforshutdown']
@@ -159,7 +166,6 @@ class AnsibleCloudStackShutdown(AnsibleCloudStack):
         return resource
     
     def cancel_shutdown(self): 
-        self.result["changed"] = True 
         management_server_id = self.get_management_server(key="id")
         args = {
             "managementserverid": management_server_id
@@ -183,7 +189,6 @@ class AnsibleCloudStackShutdown(AnsibleCloudStack):
                   if resource['readyforshutdown']['shutdowntriggered'] == False: 
                       ready = False 
         else: 
-            self.result["changed"] = False
             resource['readyforshutdown']['managementserverid'] = management_server_id
 
         if 'cancelshutdown' in resource.keys():
