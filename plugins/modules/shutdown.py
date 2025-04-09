@@ -153,10 +153,10 @@ class AnsibleCloudStackShutdown(AnsibleCloudStack):
         if not self.module.check_mode: 
             resource = self.query_api("cancelShutdown", **args)
             
-            resource['readyforshutdown']['managementserverid'] = management_server_id
+            resource['cancelshutdown']['managementserverid'] = management_server_id
 
             ready = True 
-            if resource['readyforshutdown']['readyforshutdown'] == False: 
+            if resource['cancelshutdown']['readyforshutdown'] == False: 
               ready = False
            
             while ready == True:
