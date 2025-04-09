@@ -87,7 +87,10 @@ class AnsibleCloudStackShutdown(AnsibleCloudStack):
     def __init__(self, module):
         super(AnsibleCloudStackShutdown, self).__init__(module)
         self.management_server = None
+        self.management_server_name = self.module.params.get("name")
         self.returns = {
+            "name": "name",
+            "managementserverid": "managementserverid",
             "pendingjobscount": "pending_jobs_count",
             "readyforshutdown": "ready_for_shutdown",
             "shutdowntriggered": "shutdown_triggered",
