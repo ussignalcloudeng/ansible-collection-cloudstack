@@ -87,7 +87,6 @@ class AnsibleCloudStackShutdown(AnsibleCloudStack):
     def __init__(self, module):
         super(AnsibleCloudStackShutdown, self).__init__(module)
         self.management_server = None
-        self.management_server_name = self.module.params.get("name")
         self.returns = {
             "name": "name",
             "managementserverid": "managementserverid",
@@ -174,6 +173,14 @@ class AnsibleCloudStackShutdown(AnsibleCloudStack):
           return resource['cancelshutdown']
         elif 'readyforshutdown' in resource.keys(): 
           return resource['readyforshutdown']
+        
+    def get_result(self, resource):
+        super(AnsibleCloudStackShutdown, self).get_result(resource)
+
+        if resource: 
+            self.result["name"] = self.module.params.get("name")
+
+        return self.result
 
 def main():
     argument_spec = cs_argument_spec()
