@@ -178,16 +178,20 @@ class AnsibleCloudStack:
                             self.result["diff"]["after"][key] = value
                         result = True
                 elif isinstance(value, dict):
+                    before_dict = {}
+                    after_dict = {}
                     for k,v in want_dict[key].items():
                         if k in current_dict[key]:
                             if current_dict[key][k] != v:
-                                self.result["diff"]["before"][key].update({k: current_dict[key][k]})
-                                self.result["diff"]["after"][key].update({k:v})
+                                before_dict.update({k: current_dict[key[k]]})
+                                after_dict.update({k: v})
                                 result = True
                         else: 
-                            self.result["diff"]["before"][key] = {}
-                            self.result["diff"]["after"][key] = {k:v}
+                            after_dict.update({k:v})
                             result = True
+                    if len(after_dict) > 0: 
+                        self.result["diff"]["before"][key] = before_dict
+                        self.result["diff"]["after"][key] = after_dict
                 else:
                     before_value = to_text(current_dict[key])
                     after_value = to_text(value)
