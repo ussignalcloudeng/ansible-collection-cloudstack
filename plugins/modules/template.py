@@ -393,6 +393,7 @@ class AnsibleCloudStackTemplate(AnsibleCloudStack):
             "hypervisor": "hypervisor",
             "url": "url",
             "extractMode": "mode",
+            "details": "details",
             "state": "state",
         }
 
