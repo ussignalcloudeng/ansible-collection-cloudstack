@@ -531,13 +531,20 @@ class AnsibleCloudStackTemplate(AnsibleCloudStack):
             "passwordenabled": self.module.params.get("password_enabled"),
         }
 
-        new_details = self.module.params.get("details")
-        existing_details = template["details"] 
-        if len(new_details) > 0: 
-            for k,v in existing_details.items():
-                if k not in new_details: 
-                    new_details[k] = v
-            args.update({"details": new_details})
+        cleanup = self.module.params.get("cleanup_details")
+
+        if not cleanup: 
+          new_details = self.module.params.get("details")
+          existing_details = template["details"] 
+          if len(new_details) > 0: 
+              for k,v in existing_details.items():
+                  if k not in new_details: 
+                      new_details[k] = v
+              args.update({"details": new_details})
+        else: 
+            args.update({"cleanupdetails": cleanup})
+
+
 
         if self.has_changed(args, template):
             self.result["changed"] = True
@@ -697,6 +704,7 @@ def main():
             sshkey_enabled=dict(type="bool"),
             format=dict(choices=["QCOW2", "RAW", "VHD", "OVA"]),
             details=dict(default={}, type=dict),
+            cleanup_details=dict(type="bool", default=False),
             bits=dict(type="int", choices=[32, 64], default=64),
             state=dict(choices=["present", "absent", "extracted"], default="present"),
             cross_zones=dict(type="bool", default=False),
@@ -716,6 +724,7 @@ def main():
         mutually_exclusive=(
             ["url", "vm"],
             ["zone", "cross_zones"],
+            ["details", "cleanup_details"]
         ),
         supports_check_mode=True,
     )
