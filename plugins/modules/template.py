@@ -532,10 +532,11 @@ class AnsibleCloudStackTemplate(AnsibleCloudStack):
         }
 
         new_details = self.module.params.get("details")
-        details = template["details"] 
+        existing_details = template["details"] 
         if len(new_details) > 0: 
-            for k,v in details.items():
-                new_details[k] = v
+            for k,v in existing_details.items():
+                if k not in new_details: 
+                    new_details[k] = v
             args.update({"details": new_details})
 
         if self.has_changed(args, template):
