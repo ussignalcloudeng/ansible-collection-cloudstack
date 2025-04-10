@@ -530,7 +530,7 @@ class AnsibleCloudStackTemplate(AnsibleCloudStack):
             "ostypeid": self.get_os_type(key="id"),
             "passwordenabled": self.module.params.get("password_enabled"),
         }
-        print(template)
+
         new_details = self.module.params.get("details")
         details = template["details"] 
         if len(new_details) > 0: 
@@ -539,7 +539,7 @@ class AnsibleCloudStackTemplate(AnsibleCloudStack):
 
             args.update({"details": details})
 
-        if self.has_changed(args, template):
+        if self.has_changed(args, template, skip_diff_for_keys="details"):
             self.result["changed"] = True
             if not self.module.check_mode:
                 self.query_api("updateTemplate", **args)
