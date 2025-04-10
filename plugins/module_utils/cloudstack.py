@@ -185,7 +185,8 @@ class AnsibleCloudStack:
                                 self.result["diff"]["after"][key][k] = v
                                 result = True
                         else: 
-                            self.result["diff"]["before"][key] = current_dict[key]
+                            print(f"Didn't find key {k}")
+                            self.result["diff"]["before"][key][k] = ''
                             self.result["diff"]["after"][key][k] = v 
                             result = True
                 else:
