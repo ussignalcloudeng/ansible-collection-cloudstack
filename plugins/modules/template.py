@@ -695,7 +695,7 @@ def main():
             template_tag=dict(),
             sshkey_enabled=dict(type="bool"),
             format=dict(choices=["QCOW2", "RAW", "VHD", "OVA"]),
-            details=dict(),
+            details=dict(default={}, type=dict),
             bits=dict(type="int", choices=[32, 64], default=64),
             state=dict(choices=["present", "absent", "extracted"], default="present"),
             cross_zones=dict(type="bool", default=False),
