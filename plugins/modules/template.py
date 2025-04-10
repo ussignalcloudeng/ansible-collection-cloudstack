@@ -409,6 +409,7 @@ class AnsibleCloudStackTemplate(AnsibleCloudStack):
             "requireshvm": self.module.params.get("requires_hvm"),
             "templatetag": self.module.params.get("template_tag"),
             "ostypeid": self.get_os_type(key="id"),
+            "details": self.module.params.get("details")
         }
 
         if not args["ostypeid"]:
@@ -528,6 +529,15 @@ class AnsibleCloudStackTemplate(AnsibleCloudStack):
             "ostypeid": self.get_os_type(key="id"),
             "passwordenabled": self.module.params.get("password_enabled"),
         }
+
+        new_details = self.module.params.get("details")
+        details = template["details"] 
+        if len(new_details) > 0: 
+            for k,v in new_details.items():
+                details[k] = v
+
+            args.update({"details": details})
+
         if self.has_changed(args, template):
             self.result["changed"] = True
             if not self.module.check_mode:
