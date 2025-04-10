@@ -180,10 +180,10 @@ class AnsibleCloudStack:
                 elif isinstance(value, dict):
                     for k,v in want_dict[key].items():
                         if k in current_dict[key]:
-                            if v != current_dict[key][k]:
+                            if current_dict[key][k] != v:
                                 self.result["diff"]["before"][key][k] = current_dict[key][k]
                                 self.result["diff"]["after"][key][k] = v
-                            result = True
+                                result = True
                         else: 
                             self.result["diff"]["before"][key][k] = ''
                             self.result["diff"]["after"][key][k] = v 
