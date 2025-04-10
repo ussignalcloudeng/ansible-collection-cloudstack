@@ -186,7 +186,7 @@ class AnsibleCloudStack:
                                 result = True
                         else: 
                             self.result["diff"]["before"][key] = {}
-                            self.result["diff"]["after"][key][k] = v 
+                            self.result["diff"]["after"][key] = {k:v}
                             result = True
                 else:
                     before_value = to_text(current_dict[key])
