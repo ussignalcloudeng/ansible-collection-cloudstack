@@ -530,7 +530,7 @@ class AnsibleCloudStackTemplate(AnsibleCloudStack):
             "ostypeid": self.get_os_type(key="id"),
             "passwordenabled": self.module.params.get("password_enabled"),
         }
-
+        print(template)
         new_details = self.module.params.get("details")
         details = template["details"] 
         if len(new_details) > 0: 
