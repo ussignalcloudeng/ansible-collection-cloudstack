@@ -154,7 +154,14 @@ options:
   details:
     description:
       - Template details in key/value pairs.
-    type: str
+      - Only details or cleanup_details can be specified.
+    type: dict 
+  cleanup_details: 
+    description: 
+      - Cleanup any existing template details. 
+      - Only details or cleanup_details can be specified.
+    type: bool
+    default: false
   bits:
     description:
       - 32 or 64 bits support.
