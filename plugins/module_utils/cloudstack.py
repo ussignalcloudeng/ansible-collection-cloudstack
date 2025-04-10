@@ -183,7 +183,7 @@ class AnsibleCloudStack:
                     for k,v in want_dict[key].items():
                         if k in current_dict[key]:
                             if current_dict[key][k] != v:
-                                before_dict.update({k: current_dict[key[k]]})
+                                before_dict.update({k: current_dict[key][k]})
                                 after_dict.update({k: v})
                                 result = True
                         else: 
