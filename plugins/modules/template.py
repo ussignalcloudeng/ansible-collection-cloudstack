@@ -394,7 +394,6 @@ class AnsibleCloudStackTemplate(AnsibleCloudStack):
             "url": "url",
             "extractMode": "mode",
             "details": "details",
-            "cleanupdetails": "cleanup_details",
             "state": "state",
         }
 
