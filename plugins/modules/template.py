@@ -538,7 +538,7 @@ class AnsibleCloudStackTemplate(AnsibleCloudStack):
                 details[k] = v
 
             args.update({"details": details})
-        self.module.exit_json(**args)
+            
         if self.has_changed(args, template, skip_diff_for_keys="details"):
             self.result["changed"] = True
             if not self.module.check_mode:
