@@ -181,7 +181,7 @@ class AnsibleCloudStack:
                     for k,v in want_dict[key].items():
                         if k in current_dict[key]:
                             if current_dict[key][k] != v:
-                                self.result["diff"]["before"][key] = {k: current_dict[v]}
+                                self.result["diff"]["before"][key] = {k: current_dict[key][k]}
                                 self.result["diff"]["after"][key] = {k:v}
                                 result = True
                         else: 
