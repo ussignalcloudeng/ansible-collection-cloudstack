@@ -536,10 +536,9 @@ class AnsibleCloudStackTemplate(AnsibleCloudStack):
         if len(new_details) > 0: 
             for k,v in new_details.items():
                 details[k] = v
-
             args.update({"details": details})
-            
-        if self.has_changed(args, template, skip_diff_for_keys="details"):
+
+        if self.has_changed(args, template):
             self.result["changed"] = True
             if not self.module.check_mode:
                 self.query_api("updateTemplate", **args)
